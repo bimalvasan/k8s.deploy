@@ -6,6 +6,7 @@ package org.jenkinsci.plugins.k8s.deploy;
 import java.io.IOException;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 import hudson.Extension;
 import hudson.Launcher;
@@ -15,6 +16,7 @@ import hudson.model.BuildListener;
 import hudson.model.FreeStyleProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import hudson.util.FormValidation;
 
 /**
  * @author bimal
@@ -59,6 +61,19 @@ public class DeploymentBuilder extends Builder {
 		@Override
 		public String getDisplayName() {
 			return "Deployment Builder";
-		}		
+		}	
+		
+		public FormValidation doCheckTime(@QueryParameter String time){
+			try {
+				// Check for a valid positive number.
+				if(Long.valueOf(time) < 0){
+					return FormValidation.error("Please enter a positive number.");
+				} else {
+					return FormValidation.ok();
+				}				
+			} catch (NumberFormatException e) {
+				return FormValidation.error("Please enter a number.");
+			}			
+		}
 	}
 }
